@@ -17,6 +17,30 @@ Kinesis is a comprehensive dance school platform consisting of a public-facing c
 
 ## Recent Changes (November 20, 2025)
 
+### Theme Toggle (Light/Dark Mode) - COMPLETED ✅
+
+**Implementation:**
+1. **Navigation Integration** - ThemeToggle now integrated directly into Navigation component
+   - Desktop: Positioned between "Contacto" link and CTA button with consistent gap-6 spacing
+   - Mobile: Positioned left of hamburger menu button with flex-wrap support
+   - Removed fixed-position toggle from PublicLayout and CMSLayout
+
+2. **CTA Button Update** - Desktop CTA button now shows icon-only design
+   - Changed from "Pide Información" text to Info icon
+   - Uses `size="icon"` following design guidelines
+   - Maintains accessibility with sr-only text label
+
+3. **Design Compliance**
+   - Added `flex-wrap` to mobile controls container per universal design guidelines
+   - Grouped ThemeToggle and CTA in separate container with gap-2 for proper spacing
+   - Maintains consistent visual rhythm across desktop and mobile viewports
+
+**Testing:**
+- E2E tests passed for both desktop (1280x720) and mobile (375x667) viewports
+- Theme persistence verified via localStorage
+- Dark/light mode transitions working correctly
+- All accessibility requirements met
+
 ### Critical Fixes & Optimizations - COMPLETED ✅
 
 **Performance Optimizations:**
