@@ -1,45 +1,71 @@
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, FileText, MessageSquare, Calendar } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Users, FileText, MessageSquare, Calendar, Loader2, AlertCircle } from "lucide-react";
+import type { SelectLead, SelectProgram } from "@shared/schema";
+import { formatDistanceToNow } from "date-fns";
+import { es } from "date-fns/locale";
 
 export default function Dashboard() {
+  const { data: leads, isLoading: leadsLoading, error: leadsError } = useQuery<SelectLead[]>({
+    queryKey: ["/api/leads"],
+  });
+
+  const { data: programs, isLoading: programsLoading, error: programsError } = useQuery<SelectProgram[]>({
+    queryKey: ["/api/programs"],
+  });
+
+  const isLoading = leadsLoading || programsLoading;
+  const hasError = leadsError || programsError;
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const newLeadsCount = (leads || []).filter(l => l.status === 'new').length;
+  const eliteBookingsCount = (leads || []).filter(l => l.type === 'elite_booking').length;
+  const preRegistrationsCount = (leads || []).filter(l => l.type === 'pre_registration').length;
+  const activePrograms = (programs || []).filter(p => p.published).length;
+
   const stats = [
     {
       icon: MessageSquare,
       label: "Leads Nuevos",
-      value: "12",
-      change: "+3 esta semana",
+      value: newLeadsCount.toString(),
+      change: "Sin contactar",
       color: "text-primary",
     },
     {
       icon: Calendar,
       label: "Reservas Élite",
-      value: "8",
-      change: "Esta semana",
+      value: eliteBookingsCount.toString(),
+      change: "Total",
       color: "text-accent",
     },
     {
       icon: Users,
       label: "Preinscripciones",
-      value: "5",
-      change: "+2 este mes",
+      value: preRegistrationsCount.toString(),
+      change: "Total",
       color: "text-primary",
     },
     {
       icon: FileText,
       label: "Programas Activos",
-      value: "10",
+      value: activePrograms.toString(),
       change: "Publicados",
       color: "text-accent",
     },
   ];
 
-  const recentLeads = [
-    { id: 1, name: "María García", type: "pre_registration", status: "new", date: "Hace 2 horas" },
-    { id: 2, name: "Carlos Ruiz", type: "elite_booking", status: "contacted", date: "Hace 5 horas" },
-    { id: 3, name: "Ana López", type: "contact", status: "new", date: "Hace 1 día" },
-    { id: 4, name: "Pedro Martín", type: "wedding", status: "contacted", date: "Hace 2 días" },
-  ];
+  const recentLeads = (leads || [])
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 5);
 
   const statusLabels: Record<string, string> = {
     new: "Nuevo",
@@ -62,6 +88,15 @@ export default function Dashboard() {
           Resumen de actividad de Kinesis
         </p>
       </div>
+
+      {hasError && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Algunos datos no pudieron cargarse. Los estadísticas mostradas pueden estar incompletas.
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -110,7 +145,9 @@ export default function Dashboard() {
                     </Badge>
                   </div>
                 </div>
-                <p className="font-body text-sm text-muted-foreground">{lead.date}</p>
+                <p className="font-body text-sm text-muted-foreground">
+                  {formatDistanceToNow(new Date(lead.createdAt), { addSuffix: true, locale: es })}
+                </p>
               </div>
             ))}
           </div>

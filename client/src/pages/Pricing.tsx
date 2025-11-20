@@ -1,66 +1,66 @@
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Link } from "wouter";
-import { Check, Clock, Euro, Star } from "lucide-react";
+import { Check, Clock, Euro, Loader2, AlertCircle } from "lucide-react";
+import type { SelectPricingTier, ScheduleSlotWithProgram, SelectBusinessModel } from "@shared/schema";
 
 export default function Pricing() {
-  const scheduleSlots = [
-    { day: "Lunes", time: "17:00-18:00", program: "Ballet Infantil (5-8)", room: "Sala A" },
-    { day: "Lunes", time: "18:00-19:00", program: "Hip Hop Kids (9-12)", room: "Sala A" },
-    { day: "Lunes", time: "19:00-20:00", program: "Contemporáneo PRO", room: "Sala A" },
-    { day: "Lunes", time: "20:00-21:00", program: "Clásico PRO", room: "Sala A" },
-    { day: "Martes", time: "17:00-18:00", program: "Jazz Infantil (9-12)", room: "Sala A" },
-    { day: "Martes", time: "18:00-19:00", program: "Zumba Kids (5-12)", room: "Sala A" },
-    { day: "Martes", time: "19:00-20:00", program: "Street Flow", room: "Sala A" },
-    { day: "Martes", time: "20:00-21:00", program: "Pasos de Salón", room: "Sala A" },
-    { day: "Miércoles", time: "10:00-13:00", program: "Élite On Demand", room: "Todas" },
-    { day: "Miércoles", time: "19:00-20:00", program: "Contemporáneo PRO", room: "Sala A" },
-    { day: "Miércoles", time: "20:00-21:00", program: "Clásico PRO", room: "Sala A" },
-    { day: "Jueves", time: "17:00-18:00", program: "Ballet Infantil (5-8)", room: "Sala A" },
-    { day: "Jueves", time: "18:00-19:00", program: "Hip Hop Kids (9-12)", room: "Sala A" },
-    { day: "Jueves", time: "19:00-20:00", program: "Raíces Vivas", room: "Sala A" },
-    { day: "Jueves", time: "20:00-21:00", program: "Jota Aragonesa", room: "Sala A" },
-    { day: "Viernes", time: "10:00-13:00", program: "Élite On Demand", room: "Todas" },
-    { day: "Viernes", time: "19:00-20:00", program: "Street Flow", room: "Sala A" },
-    { day: "Viernes", time: "20:00-21:00", program: "Pasos de Salón", room: "Sala A" },
-  ];
+  const { data: scheduleSlots, isLoading: slotsLoading, error: slotsError } = useQuery<ScheduleSlotWithProgram[]>({
+    queryKey: ["/api/schedule-slots"],
+  });
 
-  const pricingTiers = [
-    {
-      model: "Élite On Demand",
-      color: "primary",
-      tiers: [
-        { name: "Sesión Única", price: 45, unit: "sesión", features: ["1 hora de clase privada", "Feedback personalizado", "Sin compromiso"] },
-        { name: "Bono 5 Sesiones", price: 200, unit: "bono", features: ["5 horas de clases", "Ahorro de 25€", "Válido 3 meses"], highlighted: true },
-        { name: "Bono 10 Sesiones", price: 380, unit: "bono", features: ["10 horas de clases", "Ahorro de 70€", "Válido 6 meses"] },
-      ],
-    },
-    {
-      model: "Ritmo Constante",
-      color: "accent",
-      tiers: [
-        { name: "Suscripción PRO", price: 95, unit: "mes", features: ["4 horas/semana", "Clásico + Contemporáneo", "Matrícula 30€/año"], highlighted: true },
-        { name: "Suscripción Amateur", price: 65, unit: "mes", features: ["2 horas/semana", "Folclore, Urbano o Salón", "Matrícula 30€/año"] },
-      ],
-    },
-    {
-      model: "Generación Dance",
-      color: "accent",
-      tiers: [
-        { name: "Cuota Mensual", price: 60, unit: "mes", features: ["2 horas/semana", "Todos los estilos infantiles", "Matrícula 30€/año", "10% descuento 2º hermano"], highlighted: true },
-      ],
-    },
-    {
-      model: "Sí, Quiero Bailar",
-      color: "primary",
-      tiers: [
-        { name: "Pack Básico", price: 135, unit: "pack", features: ["3 sesiones", "Vals o baile sencillo", "Edición musical básica"] },
-        { name: "Pack Estelar", price: 210, unit: "pack", features: ["5 sesiones", "Coreografía original", "Edición musical completa"], highlighted: true },
-        { name: "Pack Premium", price: 350, unit: "pack", features: ["8 sesiones", "Hasta 4 personas extra", "Coreografías complejas"] },
-      ],
-    },
-  ];
+  const { data: pricingTiers, isLoading: pricingLoading, error: pricingError } = useQuery<SelectPricingTier[]>({
+    queryKey: ["/api/pricing-tiers"],
+  });
+
+  const { data: businessModels, isLoading: modelsLoading, error: modelsError } = useQuery<SelectBusinessModel[]>({
+    queryKey: ["/api/business-models"],
+  });
+
+  const isLoading = slotsLoading || pricingLoading || modelsLoading;
+  const hasError = slotsError || pricingError || modelsError;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Group pricing tiers by business model with proper guards
+  const groupedPricing = (businessModels || []).map((model) => ({
+    model: model.name,
+    color: model.slug.includes('elite') || model.slug.includes('boda') ? 'primary' : 'accent',
+    tiers: (pricingTiers || []).filter((tier) => tier.businessModelId === model.id),
+  })).filter((group) => group.tiers.length > 0);
+
+  // API already filters by published=true for both slots and programs
+  const publishedSlots = scheduleSlots || [];
+
+  // Map database enum values to Spanish day names
+  const dayMapping: Record<string, string> = {
+    'monday': 'Lunes',
+    'tuesday': 'Martes',
+    'wednesday': 'Miércoles',
+    'thursday': 'Jueves',
+    'friday': 'Viernes',
+    'saturday': 'Sábado',
+    'sunday': 'Domingo',
+  };
+
+  const reverseDayMapping: Record<string, string> = {
+    'Lunes': 'monday',
+    'Martes': 'tuesday',
+    'Miércoles': 'wednesday',
+    'Jueves': 'thursday',
+    'Viernes': 'friday',
+    'Sábado': 'saturday',
+    'Domingo': 'sunday',
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -91,15 +91,26 @@ export default function Pricing() {
             </p>
           </div>
 
+          {hasError && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                No pudimos cargar algunos horarios o tarifas. Por favor, inténtalo de nuevo más tarde.
+              </AlertDescription>
+            </Alert>
+          )}
+
           <div className="overflow-x-auto">
             <div className="min-w-[800px]">
-              {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"].map((day) => (
+              {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"].map((day) => {
+                const daySlots = publishedSlots.filter((slot) => slot.dayOfWeek === reverseDayMapping[day]);
+                
+                return (
                 <div key={day} className="mb-6">
                   <h3 className="font-display text-lg font-bold mb-3 px-4">{day}</h3>
                   <div className="space-y-2">
-                    {scheduleSlots
-                      .filter((slot) => slot.day === day)
-                      .map((slot, index) => (
+                    {daySlots.length > 0 ? (
+                      daySlots.map((slot, index) => (
                         <Card
                           key={index}
                           className="hover-elevate transition-all duration-200"
@@ -109,9 +120,9 @@ export default function Pricing() {
                             <div className="flex items-center justify-between gap-4 flex-wrap">
                               <div className="flex items-center gap-4 flex-1 min-w-[200px]">
                                 <Badge variant="outline" className="text-sm font-mono whitespace-nowrap">
-                                  {slot.time}
+                                  {slot.startTime} - {slot.endTime}
                                 </Badge>
-                                <span className="font-body font-semibold">{slot.program}</span>
+                                <span className="font-body font-semibold">{slot.programName}</span>
                               </div>
                               <Badge variant="secondary" className="text-xs">
                                 {slot.room}
@@ -119,10 +130,18 @@ export default function Pricing() {
                             </div>
                           </CardContent>
                         </Card>
-                      ))}
+                      ))
+                    ) : (
+                      <Card className="p-4">
+                        <p className="text-sm text-muted-foreground text-center">
+                          No hay clases programadas este día
+                        </p>
+                      </Card>
+                    )}
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -150,7 +169,7 @@ export default function Pricing() {
           </div>
 
           <div className="space-y-16">
-            {pricingTiers.map((modelGroup, groupIndex) => (
+            {groupedPricing.map((modelGroup, groupIndex) => (
               <div key={groupIndex}>
                 <h3 className="font-display text-2xl font-bold mb-6 text-center">
                   {modelGroup.model}
@@ -173,14 +192,14 @@ export default function Pricing() {
                       <CardHeader className="text-center pt-8 pb-6">
                         <h4 className="font-display text-xl font-bold mb-4">{tier.name}</h4>
                         <div className="flex items-baseline justify-center gap-1">
-                          <span className="font-display text-4xl font-bold">{tier.price}€</span>
-                          <span className="font-body text-sm text-muted-foreground">/ {tier.unit}</span>
+                          <span className="font-display text-4xl font-bold">{(tier.priceAmount / 100).toFixed(0)}€</span>
+                          <span className="font-body text-sm text-muted-foreground">/ {tier.billingPeriod}</span>
                         </div>
                       </CardHeader>
 
                       <CardContent className="pb-8">
                         <ul className="space-y-3 mb-6">
-                          {tier.features.map((feature, i) => (
+                          {(tier.features || []).map((feature, i) => (
                             <li key={i} className="flex items-start gap-2 font-body text-sm">
                               <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                               <span>{feature}</span>

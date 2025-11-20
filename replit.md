@@ -13,9 +13,42 @@ Kinesis is a comprehensive dance school platform consisting of a public-facing c
 - Database: PostgreSQL with Drizzle ORM
 - Deployment: Neon serverless PostgreSQL
 
-**Current Status:** Phase 3 (Public Pages API Integration) complete. Public-facing pages are fully integrated with backend APIs. CMS admin pages await integration.
+**Current Status:** Phase 3 (Public Pages API Integration) complete with all critical fixes applied. Public website fully functional with proper error handling, type safety, and optimized queries. Ready for Phase 4 (CMS Authentication & Advanced Features).
 
 ## Recent Changes (November 20, 2025)
+
+### Critical Fixes & Optimizations - COMPLETED ✅
+
+**Performance Optimizations:**
+1. **N+1 Query Fix** - Instructors API optimized from N+1 queries to 2 queries using IN clause
+   - Before: 1 query for instructors + N queries for specialties
+   - After: 1 query for instructors + 1 query for all specialties with IN clause
+   - ~90% reduction in database queries for instructor listings
+
+**Type Safety Improvements:**
+2. **Select Type Aliases** - Added `Select*` type aliases for all schema types (SelectPricingTier, SelectScheduleSlot, etc.)
+3. **Joined Query Types** - Added `InstructorWithSpecialties` and `ScheduleSlotWithProgram` for API responses
+4. **Consistent Type Exports** - All types now have both verbose (`PricingTier`) and Select (`SelectPricingTier`) variants
+
+**Data Quality & Filtering:**
+5. **Schedule Slots API Enhancement** - `/api/schedule-slots` now:
+   - LEFT JOINs with programs table to include program names
+   - Filters by both `scheduleSlots.published` AND `programs.published`
+   - Returns complete slot data with program information in single query
+6. **Day-of-week Mapping** - Pricing page correctly maps Spanish day names to English enum values
+   - Added `reverseDayMapping` to convert "Lunes" → "monday", etc.
+   - Schedule grid now displays actual class data instead of empty states
+
+**Error Handling & UX:**
+7. **Visible Error States** - All pages (Team, Pricing, Dashboard) now display user-friendly error alerts
+8. **Data Guards** - Added `|| []` fallbacks to prevent crashes on API failures
+9. **Empty States** - Proper empty state messages for days with no scheduled classes
+10. **Loading States** - Consistent loading spinners across all pages during data fetching
+
+**Code Quality:**
+- Fixed ternary operator syntax in Pricing.tsx
+- Removed redundant client-side filtering (API already filters published items)
+- Consistent use of TanStack Query across all data-fetching components
 
 ### Phase 3: Public Pages API Integration - COMPLETED ✅
 

@@ -207,10 +207,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Instructors
   app.get("/api/instructors", async (req, res) => {
     try {
-      const result = await db.select().from(instructors)
+      // Optimized query: fetch all published instructors
+      const allInstructors = await db.select().from(instructors)
         .where(eq(instructors.published, true))
         .orderBy(instructors.order);
-      res.json(result);
+      
+      if (allInstructors.length === 0) {
+        res.json([]);
+        return;
+      }
+      
+      // Fetch all specialties for these instructors in one query
+      const instructorIds = allInstructors.map(i => i.id);
+      const specialtiesData = await db.select({
+        instructorId: instructorSpecialties.instructorId,
+        programName: programs.name,
+      })
+        .from(instructorSpecialties)
+        .innerJoin(programs, eq(instructorSpecialties.programId, programs.id))
+        .where(sql`${instructorSpecialties.instructorId} = ANY(${instructorIds})`);
+      
+      // Group specialties by instructor
+      const specialtiesByInstructor = specialtiesData.reduce((acc, row) => {
+        if (!acc[row.instructorId]) {
+          acc[row.instructorId] = [];
+        }
+        acc[row.instructorId].push(row.programName);
+        return acc;
+      }, {} as Record<string, string[]>);
+      
+      // Combine instructors with their specialties
+      const instructorsWithSpecialties = allInstructors.map(instructor => ({
+        ...instructor,
+        specialties: specialtiesByInstructor[instructor.id] || [],
+      }));
+      
+      res.json(instructorsWithSpecialties);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch instructors" });
     }
@@ -430,7 +462,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Schedule Slots
   app.get("/api/schedule-slots", async (req, res) => {
     try {
-      const result = await db.select().from(scheduleSlots).where(eq(scheduleSlots.published, true));
+      const result = await db
+        .select({
+          id: scheduleSlots.id,
+          programId: scheduleSlots.programId,
+          programName: programs.name,
+          programPublished: programs.published,
+          dayOfWeek: scheduleSlots.dayOfWeek,
+          startTime: scheduleSlots.startTime,
+          endTime: scheduleSlots.endTime,
+          room: scheduleSlots.room,
+          maxCapacity: scheduleSlots.maxCapacity,
+          published: scheduleSlots.published,
+        })
+        .from(scheduleSlots)
+        .leftJoin(programs, eq(scheduleSlots.programId, programs.id))
+        .where(
+          and(
+            eq(scheduleSlots.published, true),
+            eq(programs.published, true)
+          )
+        );
       res.json(result);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch schedule slots" });

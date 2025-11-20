@@ -287,36 +287,48 @@ export const insertLeadSchema = createInsertSchema(leads).omit({
 
 // Select Types
 export type BusinessModel = typeof businessModels.$inferSelect;
+export type SelectBusinessModel = BusinessModel;
 export type InsertBusinessModel = z.infer<typeof insertBusinessModelSchema>;
 
 export type Program = typeof programs.$inferSelect;
+export type SelectProgram = Program;
 export type InsertProgram = z.infer<typeof insertProgramSchema>;
 
 export type Instructor = typeof instructors.$inferSelect;
+export type SelectInstructor = Instructor;
 export type InsertInstructor = z.infer<typeof insertInstructorSchema>;
+export type InstructorWithSpecialties = Instructor & { specialties: string[] };
 
 export type InstructorSpecialty = typeof instructorSpecialties.$inferSelect;
 export type InsertInstructorSpecialty = z.infer<typeof insertInstructorSpecialtySchema>;
 
 export type PricingTier = typeof pricingTiers.$inferSelect;
+export type SelectPricingTier = PricingTier;
 export type InsertPricingTier = z.infer<typeof insertPricingTierSchema>;
 
 export type ScheduleSlot = typeof scheduleSlots.$inferSelect;
+export type SelectScheduleSlot = ScheduleSlot;
+export type ScheduleSlotWithProgram = ScheduleSlot & { programName: string | null };
 export type InsertScheduleSlot = z.infer<typeof insertScheduleSlotSchema>;
 
 export type Faq = typeof faqs.$inferSelect;
+export type SelectFaq = Faq;
 export type InsertFaq = z.infer<typeof insertFaqSchema>;
 
 export type LegalPage = typeof legalPages.$inferSelect;
+export type SelectLegalPage = LegalPage;
 export type InsertLegalPage = z.infer<typeof insertLegalPageSchema>;
 
 export type PageContent = typeof pageContent.$inferSelect;
+export type SelectPageContent = PageContent;
 export type InsertPageContent = z.infer<typeof insertPageContentSchema>;
 
 export type SiteSetting = typeof siteSettings.$inferSelect;
+export type SelectSiteSetting = SiteSetting;
 export type InsertSiteSetting = z.infer<typeof insertSiteSettingSchema>;
 
 export type Lead = typeof leads.$inferSelect;
+export type SelectLead = Lead;
 export type InsertLead = z.infer<typeof insertLeadSchema>;
 
 // Remove the old User table references
