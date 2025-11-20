@@ -13,6 +13,43 @@ Kinesis is a comprehensive dance school platform consisting of a public-facing c
 - Database: PostgreSQL with Drizzle ORM
 - Deployment: Neon serverless PostgreSQL
 
+**Current Status:** Phase 3 (Public Pages API Integration) complete. Public-facing pages are fully integrated with backend APIs. CMS admin pages await integration.
+
+## Recent Changes (November 20, 2025)
+
+### Phase 3: Public Pages API Integration - COMPLETED ✅
+
+**Integrated Pages:**
+1. **Homepage** (`/`) - Fetches business models from `/api/business-models`, displays 4 pillars with loading/error states
+2. **Business Models** (`/modelos`) - Fetches business models and pricing tiers, displays FAB (Features/Advantages/Benefits) content
+3. **Programs** (`/programas`) - Fetches programs from `/api/programs`, client-side filtering by level/age
+4. **Contact** (`/contacto`) - Submits leads to `/api/leads` with type-specific metadata, program dropdown integrated with API
+
+**Technical Implementation:**
+- All data fetching uses TanStack Query (useQuery for reads, useMutation for writes)
+- Loading states display Loader2 spinner
+- Error states show user-friendly Spanish messages
+- Contact form validates lead types (contact, pre_registration, elite_booking, wedding)
+- Program dropdown dynamically populates from database (not hardcoded)
+- Success/error feedback via toast notifications
+
+**Bug Fixes Applied:**
+- Homepage CTAs corrected to link to `/modelos` instead of non-existent `/modelos/{slug}` routes
+- Contact form fixed to use `type` field (not `leadType`) matching backend schema
+- apiRequest helper signature corrected: `apiRequest("POST", url, data)`
+- Program dropdown now uses real program IDs (UUID) instead of slugs
+
+**Testing:**
+- E2E tests passed for all critical user flows
+- Form submissions confirmed working (201 status codes)
+- Navigation verified without 404 errors
+- Error handling confirmed across all pages
+
+**Pending Work:**
+- CMS pages (Dashboard, Business Models Manager, Programs Manager, etc.) still need API integration
+- Instructors page (`/equipo`) not yet integrated
+- Schedule page (`/tarifas`) not yet integrated
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
