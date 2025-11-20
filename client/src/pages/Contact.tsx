@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import type { SelectProgram } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,12 @@ export default function Contact() {
   const { toast } = useToast();
 
   const [formType, setFormType] = useState(initialType);
+
+  // Fetch programs for pre-registration dropdown
+  const { data: programs } = useQuery<SelectProgram[]>({
+    queryKey: ["/api/programs"],
+    enabled: formType === "pre_registration",
+  });
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -38,11 +45,7 @@ export default function Contact() {
 
   const submitLead = useMutation({
     mutationFn: async (data: any) => {
-      return await apiRequest("/api/leads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      return await apiRequest("POST", "/api/leads", data);
     },
     onSuccess: () => {
       toast({
@@ -74,7 +77,7 @@ export default function Contact() {
     e.preventDefault();
     
     const leadData: any = {
-      leadType: formType as any,
+      type: formType as any,
       name: formData.name,
       email: formData.email,
       phone: formData.phone || undefined,
@@ -280,14 +283,11 @@ export default function Contact() {
                           <SelectValue placeholder="Selecciona un programa" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="ballet-infantil">Ballet Infantil (5-8 años)</SelectItem>
-                          <SelectItem value="hip-hop-kids">Hip Hop Kids (5-12 años)</SelectItem>
-                          <SelectItem value="jazz-infantil">Jazz Infantil (9-12 años)</SelectItem>
-                          <SelectItem value="zumba-kids">Zumba Kids (5-12 años)</SelectItem>
-                          <SelectItem value="clasico-pro">Clásico PRO</SelectItem>
-                          <SelectItem value="contemporaneo-pro">Contemporáneo PRO</SelectItem>
-                          <SelectItem value="street-flow">Street Flow</SelectItem>
-                          <SelectItem value="raices-vivas">Raíces Vivas</SelectItem>
+                          {programs?.filter(p => p.published).map((program) => (
+                            <SelectItem key={program.id} value={program.id}>
+                              {program.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>

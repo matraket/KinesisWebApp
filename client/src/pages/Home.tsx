@@ -138,7 +138,7 @@ export default function Home() {
                       <p className="font-body text-muted-foreground mb-6 leading-relaxed">
                         {model.description}
                       </p>
-                      <Link href={`/modelos/${model.slug}`}>
+                      <Link href="/modelos">
                         <Button variant="default" className="w-full" data-testid={`button-model-cta-${index}`}>
                           {cta}
                           <ArrowRight className="ml-2 h-4 w-4" />
