@@ -1,7 +1,8 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Info } from "lucide-react";
 import { useState } from "react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function Navigation() {
   const [location] = useLocation();
@@ -42,24 +43,31 @@ export function Navigation() {
                 </span>
               </Link>
             ))}
-            <Link href="/contacto">
-              <Button size="sm" className="ml-2" data-testid="button-nav-cta">
-                Pide Información
-              </Button>
-            </Link>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <Link href="/contacto">
+                <Button size="icon" data-testid="button-nav-cta">
+                  <Info className="h-4 w-4" />
+                  <span className="sr-only">Pide Información</span>
+                </Button>
+              </Link>
+            </div>
           </div>
 
-          <button
-            className="md:hidden p-2"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            data-testid="button-mobile-menu-toggle"
-          >
-            {mobileMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
-          </button>
+          <div className="md:hidden flex flex-wrap items-center gap-2">
+            <ThemeToggle />
+            <button
+              className="p-2"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              data-testid="button-mobile-menu-toggle"
+            >
+              {mobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
+          </div>
         </div>
       </div>
 

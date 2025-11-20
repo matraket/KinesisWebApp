@@ -5,7 +5,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 import Home from "@/pages/Home";
 import About from "@/pages/About";
@@ -27,9 +26,6 @@ import Settings from "@/pages/cms/Settings";
 function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="fixed top-4 right-4 z-50">
-        <ThemeToggle />
-      </div>
       <Navigation />
       <main className="flex-1">{children}</main>
       <Footer />
@@ -41,9 +37,8 @@ function CMSLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-50 bg-card border-b border-border">
-        <div className="max-w-7xl mx-auto px-6 md:px-8 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 md:px-8 py-4">
           <h1 className="font-display text-xl font-bold">Kinesis CMS</h1>
-          <ThemeToggle />
         </div>
       </header>
       <div className="max-w-7xl mx-auto px-6 md:px-8 py-8">
