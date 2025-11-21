@@ -126,6 +126,9 @@ export function ChatWidget() {
     <>
       <Button
         size="icon"
+        style={{
+          position: "fixed !important",
+        }}
         className="fixed bottom-6 left-6 h-14 w-14 rounded-full shadow-lg z-[9999] hover-elevate active-elevate-2"
         onClick={() => setIsOpen(true)}
         data-testid="button-chat-toggle"
