@@ -6,6 +6,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 import Home from "@/pages/Home";
 import About from "@/pages/About";
@@ -18,6 +20,7 @@ import FAQ from "@/pages/FAQ";
 import LegalPage from "@/pages/LegalPage";
 import NotFound from "@/pages/not-found";
 
+import Login from "@/pages/cms/Login";
 import Dashboard from "@/pages/cms/Dashboard";
 import ProgramsManager from "@/pages/cms/ProgramsManager";
 import InstructorsManager from "@/pages/cms/InstructorsManager";
@@ -132,31 +135,46 @@ function Router() {
         </PublicLayout>
       </Route>
 
-      {/* CMS Routes */}
+      {/* CMS Login Route */}
+      <Route path="/cms/login">
+        <Login />
+      </Route>
+
+      {/* Protected CMS Routes */}
       <Route path="/cms/dashboard">
-        <CMSLayout>
-          <Dashboard />
-        </CMSLayout>
+        <ProtectedRoute>
+          <CMSLayout>
+            <Dashboard />
+          </CMSLayout>
+        </ProtectedRoute>
       </Route>
       <Route path="/cms/programs">
-        <CMSLayout>
-          <ProgramsManager />
-        </CMSLayout>
+        <ProtectedRoute>
+          <CMSLayout>
+            <ProgramsManager />
+          </CMSLayout>
+        </ProtectedRoute>
       </Route>
       <Route path="/cms/instructors">
-        <CMSLayout>
-          <InstructorsManager />
-        </CMSLayout>
+        <ProtectedRoute>
+          <CMSLayout>
+            <InstructorsManager />
+          </CMSLayout>
+        </ProtectedRoute>
       </Route>
       <Route path="/cms/leads">
-        <CMSLayout>
-          <LeadsManager />
-        </CMSLayout>
+        <ProtectedRoute>
+          <CMSLayout>
+            <LeadsManager />
+          </CMSLayout>
+        </ProtectedRoute>
       </Route>
       <Route path="/cms/settings">
-        <CMSLayout>
-          <Settings />
-        </CMSLayout>
+        <ProtectedRoute>
+          <CMSLayout>
+            <Settings />
+          </CMSLayout>
+        </ProtectedRoute>
       </Route>
 
       {/* 404 */}
@@ -169,8 +187,10 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Router />
+        <AuthProvider>
+          <Toaster />
+          <Router />
+        </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

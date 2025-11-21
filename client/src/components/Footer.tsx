@@ -96,7 +96,15 @@ export function Footer() {
 
         <div className="pt-8 border-t border-border">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 font-body text-sm text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} Kinesis. Todos los derechos reservados.</p>
+            <p>
+              &copy; {new Date().getFullYear()}{" "}
+              <Link href="/cms/login">
+                <span className="text-muted-foreground" data-testid="link-cms-hidden">
+                  Kinesis
+                </span>
+              </Link>
+              . Todos los derechos reservados.
+            </p>
             <div className="flex gap-6">
               <Link href="/legal/privacidad">
                 <span className="hover:text-primary transition-colors" data-testid="link-footer-privacy">

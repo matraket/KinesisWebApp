@@ -40,6 +40,27 @@ function removeUndefined<T extends Record<string, any>>(obj: T): Partial<T> {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Authentication
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { secret } = req.body;
+      const adminSecret = process.env.ADMIN_SECRET;
+
+      if (!adminSecret) {
+        res.status(500).json({ error: "Server configuration error" });
+        return;
+      }
+
+      if (secret === adminSecret) {
+        res.json({ success: true });
+      } else {
+        res.status(401).json({ error: "Invalid credentials" });
+      }
+    } catch (error) {
+      res.status(500).json({ error: "Authentication failed" });
+    }
+  });
+
   // Business Models
   app.get("/api/business-models", async (req, res) => {
     try {
