@@ -1,5 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import express from "express";
+import path from "path";
 import { db } from "./db";
 import {
   businessModels,
@@ -40,6 +42,9 @@ function removeUndefined<T extends Record<string, any>>(obj: T): Partial<T> {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Serve static assets from attached_assets directory
+  app.use('/assets', express.static(path.resolve(import.meta.dirname, '..', 'attached_assets')));
+
   // Authentication
   app.post("/api/auth/login", async (req, res) => {
     try {
