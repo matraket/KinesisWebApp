@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,67 +10,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { MessageSquare, Calendar, Heart, Mail, Eye } from "lucide-react";
+import { MessageSquare, Calendar, Heart, Mail, Eye, Loader2, AlertCircle } from "lucide-react";
+import type { SelectLead } from "@shared/schema";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 export default function LeadsManager() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
+  const { toast } = useToast();
 
-  const leads = [
-    {
-      id: 1,
-      name: "María García Pérez",
-      email: "maria@example.com",
-      phone: "+34 666 111 222",
-      type: "pre_registration",
-      status: "new",
-      program: "Ballet Infantil (5-8 años)",
-      date: "2024-01-15",
-      message: "Interesada en apuntar a mi hija de 6 años. ¿Cuándo empiezan las clases?",
+  const { data: allLeads, isLoading, error, refetch } = useQuery<SelectLead[]>({
+    queryKey: ["/api/leads"],
+  });
+
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: string }) =>
+      apiRequest("PUT", `/api/leads/${id}`, { status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/leads"] });
+      toast({ title: "Estado actualizado", description: "El estado del lead se ha actualizado correctamente" });
     },
-    {
-      id: 2,
-      name: "Carlos Ruiz Sánchez",
-      email: "carlos@example.com",
-      phone: "+34 666 222 333",
-      type: "elite_booking",
-      status: "contacted",
-      program: "Contemporáneo",
-      date: "2024-01-14",
-      message: "Necesito preparar una audición en febrero. ¿Disponibilidad?",
+    onError: () => {
+      toast({ title: "Error", description: "No se pudo actualizar el estado", variant: "destructive" });
     },
-    {
-      id: 3,
-      name: "Ana López Martín",
-      email: "ana@example.com",
-      phone: "+34 666 333 444",
-      type: "contact",
-      status: "new",
-      date: "2024-01-13",
-      message: "¿Ofrecen clases de Sevillanas para principiantes?",
-    },
-    {
-      id: 4,
-      name: "Pedro Martín González",
-      email: "pedro@example.com",
-      phone: "+34 666 444 555",
-      type: "wedding",
-      status: "contacted",
-      date: "2024-01-12",
-      message: "Boda en junio. Queremos hacer un vals y una sorpresa con amigos.",
-    },
-    {
-      id: 5,
-      name: "Laura Fernández",
-      email: "laura@example.com",
-      phone: "+34 666 555 666",
-      type: "pre_registration",
-      status: "closed",
-      program: "Hip Hop Kids (9-12 años)",
-      date: "2024-01-10",
-      message: "Mi hijo quiere aprender Hip Hop. Info por favor.",
-    },
-  ];
+  });
 
   const typeIcons: Record<string, any> = {
     contact: MessageSquare,
@@ -91,6 +56,28 @@ export default function LeadsManager() {
     closed: "Cerrado",
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 py-12">
+        <AlertCircle className="w-12 h-12 text-destructive" />
+        <p className="text-muted-foreground text-center">Error al cargar los leads</p>
+        <Button onClick={() => refetch()} variant="outline">
+          Reintentar
+        </Button>
+      </div>
+    );
+  }
+
+  const leads = allLeads || [];
+  
   const filteredLeads = leads.filter((lead) => {
     const statusMatch = statusFilter === "all" || lead.status === statusFilter;
     const typeMatch = typeFilter === "all" || lead.type === typeFilter;
@@ -106,7 +93,6 @@ export default function LeadsManager() {
         </p>
       </div>
 
-      {/* Filters */}
       <Card>
         <CardContent className="p-6">
           <div className="flex flex-wrap gap-4">
@@ -144,7 +130,6 @@ export default function LeadsManager() {
         </CardContent>
       </Card>
 
-      {/* Leads List */}
       <div className="space-y-4">
         <p className="font-body text-sm text-muted-foreground">
           {filteredLeads.length} lead{filteredLeads.length !== 1 ? "s" : ""} encontrado{filteredLeads.length !== 1 ? "s" : ""}
@@ -181,16 +166,13 @@ export default function LeadsManager() {
                       <p className="text-muted-foreground">
                         <span className="font-medium">Email:</span> {lead.email}
                       </p>
-                      <p className="text-muted-foreground">
-                        <span className="font-medium">Teléfono:</span> {lead.phone}
-                      </p>
-                      {lead.program && (
+                      {lead.phone && (
                         <p className="text-muted-foreground">
-                          <span className="font-medium">Programa:</span> {lead.program}
+                          <span className="font-medium">Teléfono:</span> {lead.phone}
                         </p>
                       )}
                       <p className="text-muted-foreground">
-                        <span className="font-medium">Fecha:</span> {new Date(lead.date).toLocaleDateString('es-ES')}
+                        <span className="font-medium">Fecha:</span> {new Date(lead.createdAt).toLocaleDateString('es-ES')}
                       </p>
                     </div>
 
@@ -204,11 +186,10 @@ export default function LeadsManager() {
                   </div>
 
                   <div className="flex md:flex-col gap-2 md:items-end">
-                    <Button size="sm" variant="outline" data-testid={`button-view-${lead.id}`}>
-                      <Eye className="h-4 w-4 md:mr-2" />
-                      <span className="hidden md:inline">Ver</span>
-                    </Button>
-                    <Select defaultValue={lead.status}>
+                    <Select 
+                      value={lead.status} 
+                      onValueChange={(value) => updateStatusMutation.mutate({ id: lead.id, status: value })}
+                    >
                       <SelectTrigger className="w-full md:w-[140px]" data-testid={`select-status-${lead.id}`}>
                         <SelectValue />
                       </SelectTrigger>

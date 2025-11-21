@@ -25,7 +25,7 @@ import {
   insertSiteSettingSchema,
   insertLeadSchema,
 } from "@shared/schema";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, inArray } from "drizzle-orm";
 import { z } from "zod";
 
 // Helper function to remove undefined values from objects
@@ -225,7 +225,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       })
         .from(instructorSpecialties)
         .innerJoin(programs, eq(instructorSpecialties.programId, programs.id))
-        .where(sql`${instructorSpecialties.instructorId} = ANY(${instructorIds})`);
+        .where(inArray(instructorSpecialties.instructorId, instructorIds));
       
       // Group specialties by instructor
       const specialtiesByInstructor = specialtiesData.reduce((acc, row) => {
@@ -244,6 +244,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(instructorsWithSpecialties);
     } catch (error) {
+      console.error("Error fetching instructors:", error);
       res.status(500).json({ error: "Failed to fetch instructors" });
     }
   });

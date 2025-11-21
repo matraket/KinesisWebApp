@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 import Home from "@/pages/Home";
 import About from "@/pages/About";
@@ -38,7 +39,10 @@ function CMSLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-50 bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-6 md:px-8 py-4">
-          <h1 className="font-display text-xl font-bold">Kinesis CMS</h1>
+          <div className="flex items-center justify-between gap-4">
+            <h1 className="font-display text-xl font-bold">Kinesis CMS</h1>
+            <ThemeToggle />
+          </div>
         </div>
       </header>
       <div className="max-w-7xl mx-auto px-6 md:px-8 py-8">
