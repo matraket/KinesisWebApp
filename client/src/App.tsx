@@ -8,6 +8,7 @@ import { Footer } from "@/components/Footer";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { ChatWidget } from "@/components/ChatWidget";
 
 import Home from "@/pages/Home";
 import About from "@/pages/About";
@@ -34,6 +35,7 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
       <Navigation />
       <main className="flex-1">{children}</main>
       <Footer />
+      <ChatWidget />
     </div>
   );
 }
