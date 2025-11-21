@@ -1,0 +1,52 @@
+Queremos implementar un **widget de chat** con las siguientes características:
+
+1. **Botón flotante (“bolita” de chat)**
+
+   * Ubicación: fijo en la esquina **inferior derecha** de la pantalla.
+   * Apariencia: una bolita/ícono típico de chat.
+   * Comportamiento:
+
+     * Al hacer clic sobre la bolita, se debe **abrir un panel lateral** de chat.
+     * Al volver a hacer clic (o cerrar), el panel debe **ocultarse** y solo quedar visible la bolita.
+
+2. **Panel lateral de chat**
+
+   * Se abrirá desde un lateral de la pantalla (por ejemplo, desde la derecha).
+   * En la **parte inferior** del panel habrá una **caja de texto** para que el usuario pueda escribir mensajes.
+   * Por encima de la caja de texto se mostrará el **historial de conversación** (mensajes del usuario y respuestas del chatbot).
+
+3. **Funcionalidad de chat con IA**
+
+   * La caja de texto actuará como un **input de chat** conectado a un **chatbot de Inteligencia Artificial**.
+   * Cada vez que el usuario escriba y envíe un mensaje:
+
+     * El mensaje se debe **añadir al panel de chat** (historial).
+     * Se enviará a la lógica de IA / ChatBot n8n.
+     * La respuesta generada por la IA se mostrará también en el panel de chat.
+
+3. **ChatBot n8n**
+
+Cuando el usuario pulsa en boton de enviar se debe:
+
+1. Generar el JSON para ChatBot
+
+   - sessionId: Tiene que ser un Identificador unico que se enviara en todos los mensajes al chatbot,
+   - action: valor fijo "sendMessage",
+   - chatInput: Mensaje del usuario
+
+   [
+      {
+         "sessionId": "cbc75a0392e2440089c7574f6831e8c9",
+         "action": "sendMessage",
+         "chatInput": "Hola"
+      }
+   ]
+   
+2. Lo que escribe el usuario se envia por medio de una peticion HTTP POST https://n8n.solucioncue.com/webhook/bec848ec-7780-4900-a135-64a30362af4f/chat
+3. Esperar la respuesta del chatbox que la recibiras en el HTTP Response con la siguiente estructura
+   [
+      {
+         "output": "¡Hola! Soy ArIA, tu asistente en Kinesis 🩰. Puedo ayudarte con información sobre nuestras clases, reservas, inscripciones o cualquier consulta que tengas. ¿En qué puedo ayudarte hoy?"
+      }
+   ]   
+4. **Añadir al panel de chat** (historial) la respuesta del bot. 
