@@ -6,6 +6,7 @@ import {
   pricingTiers,
   scheduleSlots,
   faqs,
+  legalPages,
 } from "@shared/schema";
 
 async function seed() {
@@ -422,6 +423,104 @@ async function seed() {
     ]);
 
     console.log("✅ Created FAQs");
+
+    // Seed Legal Pages
+    console.log("📄 Seeding legal pages...");
+    await db.insert(legalPages).values([
+      {
+        slug: "privacidad",
+        title: "Política de Privacidad",
+        content: `
+          <h2>1. Información General</h2>
+          <p>En Kinesis, nos comprometemos a proteger la privacidad de nuestros usuarios. Esta política describe cómo recopilamos, usamos y protegemos su información personal.</p>
+          
+          <h2>2. Datos que Recopilamos</h2>
+          <p>Recopilamos información que usted nos proporciona directamente, como:</p>
+          <ul>
+            <li>Nombre y apellidos</li>
+            <li>Dirección de correo electrónico</li>
+            <li>Número de teléfono</li>
+            <li>Información de inscripción a programas</li>
+          </ul>
+          
+          <h2>3. Uso de la Información</h2>
+          <p>Utilizamos su información para:</p>
+          <ul>
+            <li>Gestionar su inscripción en nuestros programas</li>
+            <li>Comunicarnos con usted sobre clases y eventos</li>
+            <li>Mejorar nuestros servicios</li>
+            <li>Cumplir con obligaciones legales</li>
+          </ul>
+          
+          <h2>4. Protección de Datos</h2>
+          <p>Implementamos medidas de seguridad técnicas y organizativas para proteger sus datos personales contra acceso no autorizado, pérdida o alteración.</p>
+          
+          <h2>5. Sus Derechos</h2>
+          <p>Tiene derecho a acceder, rectificar, cancelar y oponerse al tratamiento de sus datos personales. Para ejercer estos derechos, contáctenos en info@kinesis.com.</p>
+          
+          <h2>6. Contacto</h2>
+          <p>Para cualquier consulta sobre esta política de privacidad, puede contactarnos en info@kinesis.com o en nuestra dirección: Calle Ejemplo, 123, 50001 Zaragoza.</p>
+        `,
+        published: true,
+      },
+      {
+        slug: "cookies",
+        title: "Política de Cookies",
+        content: `
+          <h2>1. ¿Qué son las Cookies?</h2>
+          <p>Las cookies son pequeños archivos de texto que se almacenan en su dispositivo cuando visita nuestro sitio web. Nos ayudan a mejorar su experiencia de navegación.</p>
+          
+          <h2>2. Tipos de Cookies que Utilizamos</h2>
+          <h3>Cookies Esenciales</h3>
+          <p>Necesarias para el funcionamiento básico del sitio web. No se pueden desactivar.</p>
+          
+          <h3>Cookies de Rendimiento</h3>
+          <p>Nos ayudan a entender cómo los visitantes interactúan con nuestro sitio web.</p>
+          
+          <h3>Cookies de Funcionalidad</h3>
+          <p>Permiten que el sitio web recuerde sus preferencias (como idioma o región).</p>
+          
+          <h2>3. Gestión de Cookies</h2>
+          <p>Puede controlar y/o eliminar las cookies según desee. Puede eliminar todas las cookies que ya están en su dispositivo y configurar la mayoría de los navegadores para evitar que se instalen.</p>
+          
+          <h2>4. Más Información</h2>
+          <p>Para más información sobre cómo gestionamos las cookies, contáctenos en info@kinesis.com.</p>
+        `,
+        published: true,
+      },
+      {
+        slug: "terminos",
+        title: "Términos y Condiciones",
+        content: `
+          <h2>1. Aceptación de los Términos</h2>
+          <p>Al acceder y utilizar este sitio web, acepta estar sujeto a estos términos y condiciones de uso.</p>
+          
+          <h2>2. Servicios Ofrecidos</h2>
+          <p>Kinesis ofrece clases de danza y servicios relacionados según los diferentes modelos de negocio descritos en nuestro sitio web.</p>
+          
+          <h2>3. Inscripción y Pago</h2>
+          <p>La inscripción en nuestros programas requiere el pago de una matrícula anual (según corresponda) y las cuotas mensuales correspondientes. Los pagos deben realizarse según las condiciones especificadas para cada programa.</p>
+          
+          <h2>4. Cancelaciones y Reembolsos</h2>
+          <p>Las cancelaciones deben notificarse con al menos 7 días de antelación. Las matrículas no son reembolsables. Las cuotas mensuales pueden ser reembolsadas parcialmente según las condiciones específicas de cada programa.</p>
+          
+          <h2>5. Código de Conducta</h2>
+          <p>Los participantes deben mantener un comportamiento respetuoso hacia instructores, personal y otros estudiantes. Nos reservamos el derecho de expulsar a cualquier persona que no cumpla con nuestro código de conducta.</p>
+          
+          <h2>6. Responsabilidad</h2>
+          <p>Los participantes asisten a las clases bajo su propia responsabilidad. Kinesis no se hace responsable de lesiones que puedan ocurrir durante las clases, salvo en casos de negligencia demostrable.</p>
+          
+          <h2>7. Modificaciones</h2>
+          <p>Nos reservamos el derecho de modificar estos términos y condiciones en cualquier momento. Las modificaciones entrarán en vigor inmediatamente después de su publicación en el sitio web.</p>
+          
+          <h2>8. Contacto</h2>
+          <p>Para cualquier consulta sobre estos términos, contáctenos en info@kinesis.com.</p>
+        `,
+        published: true,
+      },
+    ]);
+
+    console.log("✅ Created legal pages");
 
     console.log("🎉 Database seed completed successfully!");
   } catch (error) {
