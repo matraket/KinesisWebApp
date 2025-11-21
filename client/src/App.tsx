@@ -6,9 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { useAuth } from "@/hooks/useAuth";
 
-import Landing from "@/pages/Landing";
 import Home from "@/pages/Home";
 import About from "@/pages/About";
 import BusinessModels from "@/pages/BusinessModels";
@@ -37,27 +35,13 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
 }
 
 function CMSLayout({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
-  
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-50 bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-6 md:px-8 py-4">
           <div className="flex items-center justify-between gap-4">
             <h1 className="font-display text-xl font-bold">Kinesis CMS</h1>
-            <div className="flex items-center gap-4">
-              {user && (
-                <span className="text-sm text-muted-foreground" data-testid="text-user-email">
-                  {user.email}
-                </span>
-              )}
-              <ThemeToggle />
-              <a href="/api/logout">
-                <span className="text-sm font-medium hover:text-primary transition-colors" data-testid="link-logout">
-                  Logout
-                </span>
-              </a>
-            </div>
+            <ThemeToggle />
           </div>
         </div>
       </header>
@@ -97,62 +81,11 @@ function CMSLayout({ children }: { children: React.ReactNode }) {
 
 function Router() {
   const [location] = useLocation();
-  const { isAuthenticated, isLoading } = useAuth();
   const isCMS = location.startsWith("/cms");
-
-  // Show landing page while loading or not authenticated
-  if (isLoading || !isAuthenticated) {
-    return (
-      <Switch>
-        <Route path="/" component={Landing} />
-        <Route path="/quienes-somos">
-          <PublicLayout>
-            <About />
-          </PublicLayout>
-        </Route>
-        <Route path="/modelos">
-          <PublicLayout>
-            <BusinessModels />
-          </PublicLayout>
-        </Route>
-        <Route path="/programas">
-          <PublicLayout>
-            <Programs />
-          </PublicLayout>
-        </Route>
-        <Route path="/equipo">
-          <PublicLayout>
-            <Team />
-          </PublicLayout>
-        </Route>
-        <Route path="/tarifas">
-          <PublicLayout>
-            <Pricing />
-          </PublicLayout>
-        </Route>
-        <Route path="/contacto">
-          <PublicLayout>
-            <Contact />
-          </PublicLayout>
-        </Route>
-        <Route path="/faq">
-          <PublicLayout>
-            <FAQ />
-          </PublicLayout>
-        </Route>
-        <Route path="/legal/:slug">
-          <PublicLayout>
-            <LegalPage />
-          </PublicLayout>
-        </Route>
-        <Route component={NotFound} />
-      </Switch>
-    );
-  }
 
   return (
     <Switch>
-      {/* Home Route - authenticated users see Home page */}
+      {/* Public Routes */}
       <Route path="/">
         <PublicLayout>
           <Home />
