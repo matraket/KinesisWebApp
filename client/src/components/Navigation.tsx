@@ -1,12 +1,14 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Info } from "lucide-react";
+import { Menu, X, Info, Settings } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useAuth } from "@/hooks/useAuth";
 
 export function Navigation() {
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   const navItems = [
     { href: "/", label: "Inicio" },
@@ -45,6 +47,14 @@ export function Navigation() {
             ))}
             <div className="flex items-center gap-2">
               <ThemeToggle />
+              {isAuthenticated && (
+                <Link href="/cms/dashboard">
+                  <Button variant="outline" size="icon" data-testid="button-nav-cms">
+                    <Settings className="h-4 w-4" />
+                    <span className="sr-only">CMS</span>
+                  </Button>
+                </Link>
+              )}
               <Link href="/contacto">
                 <Button size="icon" data-testid="button-nav-cta">
                   <Info className="h-4 w-4" />
@@ -89,6 +99,14 @@ export function Navigation() {
                 </span>
               </Link>
             ))}
+            {isAuthenticated && (
+              <Link href="/cms/dashboard">
+                <Button variant="outline" className="w-full mt-4" data-testid="button-mobile-cms">
+                  <Settings className="h-4 w-4 mr-2" />
+                  CMS
+                </Button>
+              </Link>
+            )}
             <Link href="/contacto">
               <Button className="w-full mt-4" data-testid="button-mobile-cta">
                 Pide Información
