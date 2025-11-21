@@ -1,0 +1,79 @@
+Quiero que la sección de la WEB modelos de negocio este conectada con el api y se construlla dinamicamente.
+
+La estructura de la página se debe mantener tal cual. unicamnete debe presentar los modelos de negocio que haya en la base de datos y no no datos hardcoded.
+
+Debes crear en la base de datos todos lo compos que falta para poder almacenar toda la informacion que hay en cada modelos de negocio hardcodeados.
+
+Ahora mismo la estructura hardcodeada de cada modelo de negocio es la siguiente:
+
+const models_backup = [{
+  icon: ,
+  title: ,
+  tagline: ,
+  description: ,
+  image: ,
+  features:[
+    "features 1",
+    "features 2",
+    "features 3",
+    ...
+    "features N",
+  ],
+  advantages:[
+    "advantages 1",
+    "advantages 2",
+    "advantages 3",
+    ...
+    "advantages N",
+  ],
+  benefits:[
+    "benefits 1",
+    "benefits 2",
+    "benefits 3",
+    ...
+    "benefits N",
+  ],
+  pricing:{
+    session: ,
+    bono5: ,
+    bono10: ,
+  },
+  cta: ,
+  ctaLink: ,
+}]
+
+En la tabla actual business_models ya podemos mapear los siguientes campos:
+
+- models_backup.title --> business_models.name
+- models_backup.icon --> business_models.icon_name
+- models_backup.tagline --> business_models.tagline
+- models_backup.description --> business_models.description
+- models_backup.image --> business_models.image_url
+
+En estos otros campos no existen actualmente campos para mapearlos:
+
+- models_backup.features 
+- models_backup.advantages 
+- models_backup.benefits 
+- models_backup.pricing 
+- models_backup.cta 
+- models_backup.ctaLink 
+
+Hay que crear en la tabla business_models los campos necesarios para mapear toda la informacion que falta, que son:
+
+business_models.features --> JSONB, puede estar vacio
+business_models.advantages --> JSONB, puede estar vacio
+business_models.benefits --> JSONB, puede estar vacio
+business_models.pricing_session --> DECIMAL(10, 2), obligatorio
+business_models.pricing_bono5 --> DECIMAL(10, 2), obligatorio
+business_models.pricing_bono10 --> DECIMAL(10, 2), obligatorio
+business_models.cta --> VARCHAR(100), obligatorio
+business_models.cta_link --> VARCHAR(255), obligatorio
+
+Crea una migracion para añadir los nuevos campos y luego insertar los datos que hay en models_backup en la tabla business_models. Elimina previamente los datos que haya en la tabla business_models para evitar duplicados.
+
+Adapta los enpoints del API necesarios para:
+- Due la seccin de modelos de negocio se construya dinamicamente a partir de los datos que hay en la base de datos.
+- Desde el CMS se puedan crear, editar y eliminar modelos de negocio.
+
+Planificalo 

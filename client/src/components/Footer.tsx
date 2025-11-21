@@ -7,7 +7,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-6 md:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           <div>
-            <h3 className="font-display font-bold text-lg mb-4">Kinesis</h3>
+            <h3 className="font-display font-bold text-lg mb-4"><a href="/cms/login">Kinesis</a></h3>
             <p className="font-body text-sm text-muted-foreground leading-relaxed">
               Centro de danza de referencia en Zaragoza. Democratizamos la excelencia en la danza.
             </p>
