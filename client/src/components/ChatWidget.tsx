@@ -126,7 +126,7 @@ export function ChatWidget() {
     <>
       <Button
         size="icon"
-        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-50 hover-elevate active-elevate-2"
+        className="fixed bottom-6 left-6 h-14 w-14 rounded-full shadow-lg z-50 hover-elevate active-elevate-2"
         onClick={() => setIsOpen(true)}
         data-testid="button-chat-toggle"
       >
@@ -134,7 +134,7 @@ export function ChatWidget() {
       </Button>
 
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetContent side="right" className="w-full sm:w-[400px] p-0 flex flex-col">
+        <SheetContent side="left" className="w-full sm:w-[400px] p-0 flex flex-col">
           <SheetHeader className="p-6 border-b border-border">
             <div className="flex items-center justify-between">
               <SheetTitle className="font-display text-xl">ArIA - Asistente Kinesis</SheetTitle>
