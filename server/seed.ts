@@ -235,7 +235,6 @@ async function seed() {
     await db.insert(instructors).values([
       {
         name: "Elena Herrero",
-        slug: "elena-herrero",
         role: "Directora Artística y Profesora de Clásico",
         quote: "La técnica es la base, pero la pasión es el alma.",
         bio: "Bailarina profesional formada en la RCPD de Madrid. Solista del Ballet Nacional durante 15 años. Profesora de Ballet Clásico en Kinesis, especializada en técnica de puntas y variaciones.",
@@ -246,7 +245,6 @@ async function seed() {
       },
       {
         name: "Pablo Rivas",
-        slug: "pablo-rivas",
         role: "Profesor de Contemporáneo",
         quote: "El movimiento es un lenguaje. Yo te enseño a hablarlo con fluidez.",
         bio: "Bailarín contemporáneo formado en Amsterdam y Londres. Ha trabajado con compañías de prestigio internacional. Experto en técnicas Cunningham, Release y Floor Work.",
@@ -257,7 +255,6 @@ async function seed() {
       },
       {
         name: "Diego Montes",
-        slug: "diego-montes",
         role: "Profesor de Hip Hop y Urbano",
         quote: "El Hip Hop es actitud, es cultura, es libertad. Ven y descúbrela.",
         bio: "B-boy con más de 20 años de experiencia en la escena urbana. Campeón regional de Breaking. Especialista en Popping, Locking y House.",
@@ -268,7 +265,6 @@ async function seed() {
       },
       {
         name: "Lucía Sanz",
-        slug: "lucia-sanz",
         role: "Instructora de Extraescolares",
         quote: "Los niños son pura energía y creatividad. Mi misión es canalizarla.",
         bio: "Especialista en pedagogía infantil aplicada a la danza. Monitora de Zumba Kids certificada. Responsable de todos los programas de Generación Dance.",
