@@ -23,6 +23,11 @@ export const businessModels = pgTable("business_models", {
   benefits: json("benefits").$type<string[]>().notNull().default(sql`'[]'::json`),
   imageUrl: text("image_url"),
   iconName: varchar("icon_name"),
+  cta: varchar("cta", { length: 100 }).notNull(),
+  ctaLink: varchar("cta_link", { length: 255 }).notNull(),
+  pricingSession: integer("pricing_session"),
+  pricingBono5: integer("pricing_bono5"),
+  pricingBono10: integer("pricing_bono10"),
   order: integer("order").notNull().default(0),
   published: boolean("published").notNull().default(true),
   createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -221,9 +226,14 @@ export const insertBusinessModelSchema = createInsertSchema(businessModels)
     updatedAt: true,
   })
   .extend({
-    features: z.array(z.string()).min(1, "At least one feature is required"),
-    advantages: z.array(z.string()).min(1, "At least one advantage is required"),
-    benefits: z.array(z.string()).min(1, "At least one benefit is required"),
+    features: z.array(z.string()).optional().default([]),
+    advantages: z.array(z.string()).optional().default([]),
+    benefits: z.array(z.string()).optional().default([]),
+    cta: z.string().min(1, "CTA is required"),
+    ctaLink: z.string().min(1, "CTA Link is required"),
+    pricingSession: z.number().optional(),
+    pricingBono5: z.number().optional(),
+    pricingBono10: z.number().optional(),
   });
 
 export const insertProgramSchema = createInsertSchema(programs).omit({

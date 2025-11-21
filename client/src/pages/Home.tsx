@@ -2,33 +2,18 @@ import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, Sparkles, Users, Heart, TrendingUp, Loader2 } from "lucide-react";
+import { ArrowRight, Sparkles, Users, Heart, TrendingUp, Loader2, LucideIcon } from "lucide-react";
 import type { SelectBusinessModel } from "@shared/schema";
 import heroImage from "@assets/generated_images/hero_dancer_dramatic_leap.png";
-import eliteImage from "@assets/generated_images/elite_private_coaching_session.png";
-import groupImage from "@assets/generated_images/group_dance_class_energy.png";
-import childrenImage from "@assets/generated_images/children's_dance_class_joy.png";
-import weddingImage from "@assets/generated_images/wedding_couple_first_dance.png";
 
-const iconMap: Record<string, any> = {
-  "elite-on-demand": Sparkles,
-  "ritmo-constante": TrendingUp,
-  "generacion-dance": Heart,
-  "si-quiero-bailar": Users,
-};
-
-const imageMap: Record<string, string> = {
-  "elite-on-demand": eliteImage,
-  "ritmo-constante": groupImage,
-  "generacion-dance": childrenImage,
-  "si-quiero-bailar": weddingImage,
-};
-
-const ctaMap: Record<string, string> = {
-  "elite-on-demand": "Reserva tu sesión",
-  "ritmo-constante": "Ver horarios",
-  "generacion-dance": "Preinscribe a tu hijo/a",
-  "si-quiero-bailar": "Consulta packs",
+const getIconComponent = (iconName: string | null): LucideIcon => {
+  const icons: Record<string, LucideIcon> = {
+    Sparkles,
+    TrendingUp,
+    Heart,
+    Users,
+  };
+  return iconName && icons[iconName] ? icons[iconName] : Sparkles;
 };
 
 export default function Home() {
@@ -106,9 +91,7 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {displayModels.map((model, index) => {
-                const Icon = iconMap[model.slug] || Sparkles;
-                const image = imageMap[model.slug] || eliteImage;
-                const cta = ctaMap[model.slug] || "Más información";
+                const Icon = getIconComponent(model.iconName);
 
                 return (
                   <Card
@@ -117,11 +100,13 @@ export default function Home() {
                     data-testid={`card-business-model-${index}`}
                   >
                     <div className="relative h-56 overflow-hidden">
-                      <img
-                        src={image}
-                        alt={model.name}
-                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                      />
+                      {model.imageUrl && (
+                        <img
+                          src={model.imageUrl}
+                          alt={model.name}
+                          className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                        />
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent" />
                       <div className="absolute bottom-4 left-6 flex items-center gap-3">
                         <div className="p-2 rounded-lg bg-primary/20 backdrop-blur-sm">
@@ -129,7 +114,9 @@ export default function Home() {
                         </div>
                         <div>
                           <h3 className="font-display text-2xl font-bold">{model.name}</h3>
-                          <p className="font-body text-sm text-muted-foreground">{model.tagline}</p>
+                          {model.tagline && (
+                            <p className="font-body text-sm text-muted-foreground">{model.tagline}</p>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -140,7 +127,7 @@ export default function Home() {
                       </p>
                       <Link href="/modelos">
                         <Button variant="default" className="w-full" data-testid={`button-model-cta-${index}`}>
-                          {cta}
+                          {model.cta}
                           <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
                       </Link>

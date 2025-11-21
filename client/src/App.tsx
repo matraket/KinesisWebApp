@@ -22,6 +22,7 @@ import NotFound from "@/pages/not-found";
 
 import Login from "@/pages/cms/Login";
 import Dashboard from "@/pages/cms/Dashboard";
+import BusinessModelsManager from "@/pages/cms/BusinessModelsManager";
 import ProgramsManager from "@/pages/cms/ProgramsManager";
 import InstructorsManager from "@/pages/cms/InstructorsManager";
 import LeadsManager from "@/pages/cms/LeadsManager";
@@ -53,6 +54,11 @@ function CMSLayout({ children }: { children: React.ReactNode }) {
           <Link href="/cms/dashboard">
             <span className="font-body text-sm font-medium hover:text-primary transition-colors" data-testid="link-cms-dashboard">
               Dashboard
+            </span>
+          </Link>
+          <Link href="/cms/business-models">
+            <span className="font-body text-sm font-medium hover:text-primary transition-colors" data-testid="link-cms-business-models">
+              Modelos de Negocio
             </span>
           </Link>
           <Link href="/cms/programs">
@@ -145,6 +151,13 @@ function Router() {
         <ProtectedRoute>
           <CMSLayout>
             <Dashboard />
+          </CMSLayout>
+        </ProtectedRoute>
+      </Route>
+      <Route path="/cms/business-models">
+        <ProtectedRoute>
+          <CMSLayout>
+            <BusinessModelsManager />
           </CMSLayout>
         </ProtectedRoute>
       </Route>

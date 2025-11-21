@@ -64,7 +64,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Business Models
   app.get("/api/business-models", async (req, res) => {
     try {
-      const result = await db.select().from(businessModels).where(eq(businessModels.published, true)).orderBy(businessModels.order);
+      const includeUnpublished = req.query.includeUnpublished === 'true';
+      
+      const query = db.select().from(businessModels);
+      const result = includeUnpublished 
+        ? await query.orderBy(businessModels.order)
+        : await query.where(eq(businessModels.published, true)).orderBy(businessModels.order);
+      
       res.json(result);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch business models" });
